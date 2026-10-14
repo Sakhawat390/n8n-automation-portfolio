@@ -1,0 +1,374 @@
+{
+  "updatedAt": "2026-10-07T16:52:34.126Z",
+  "createdAt": "2026-09-28T17:23:09.005Z",
+  "id": "L17DPt3FNlvb6DlV",
+  "name": "AI Support Call Analysis & Assistant",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-safeguard-20b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        -48
+      ],
+      "id": "842bad00-3c86-48d1-a358-3169564dadff",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "bKiWqa0hJsOO8yLj",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Support Call Analysis Request",
+        "formDescription": "Submit a customer support call transcript for AI-powered analysis. The system will summarize the conversation, identify the customer's main issue, determine its priority, and recommend the appropriate follow-up action.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Customer Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Customer Email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Call Transcript",
+              "fieldType": "textarea",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        -880,
+        -288
+      ],
+      "id": "935d406e-9045-4a8b-9fb5-83bc4eba888d",
+      "name": "Support Call Intake",
+      "webhookId": "71e4d806-1195-45e4-85ff-c8c86e57332a"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze this customer support call transcript.\n\nCustomer Name:\n{{ $('Support Call Intake').item.json[\"Customer Name\"] }}\n\nCustomer Email:\n{{ $('Support Call Intake').item.json[\"Customer Email\"] }}\n\nCall Transcript:\n{{ $('Support Call Intake').item.json[\"Call Transcript\"] }}\n\nAnalyze the conversation and return the required JSON containing:\n\n- A concise summary\n- The customer's main issue\n- Priority: Hot, Warm, or Cold\n- A professional suggested response\n- The recommended follow-up action\n\nBase the analysis only on the information provided in the transcript.",
+        "options": {
+          "systemMessage": "You are an AI support call analysis assistant for a business.\n\nYour job is to analyze customer support call transcripts objectively and provide a structured analysis for the support team.\n\nReturn ONLY valid JSON with exactly these five fields:\n\n{\n  \"summary\": \"A concise summary of the conversation.\",\n  \"customer_issue\": \"The main problem or request raised by the customer.\",\n  \"priority\": \"Hot, Warm, or Cold\",\n  \"suggested_response\": \"A professional response the support team can give to the customer.\",\n  \"follow_up_action\": \"The recommended next action for the support team.\"\n}\n\nPriority guidelines:\n\nHot:\nThe customer has an urgent issue, serious problem, strong escalation, or requires immediate attention.\n\nWarm:\nThe customer has a legitimate issue or request that requires follow-up but is not immediately urgent.\n\nCold:\nThe issue is low urgency, informational, resolved, or requires little immediate action.\n\nRules:\n\n- Use only information contained in the transcript.\n- Do not invent facts, promises, policies, or customer information.\n- Keep the analysis concise and professional.\n- Make the suggested response appropriate to the customer's situation.\n- Make the follow-up action practical and specific.\n- Do not expose internal reasoning.\n- Do not use Markdown.\n- Do not include ```json.\n- Do not add any text before or after the JSON."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -512,
+        -288
+      ],
+      "id": "c12e012d-ebf5-4b6d-9951-4540b0e77857",
+      "name": "Analyze Support Call"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1y2sXtDC4UUdZaBwdp0d_p3vKzo1q1A1h_inqekaP43E",
+          "mode": "list",
+          "cachedResultName": "AI SUpport Call Records",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1y2sXtDC4UUdZaBwdp0d_p3vKzo1q1A1h_inqekaP43E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Call Records",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1y2sXtDC4UUdZaBwdp0d_p3vKzo1q1A1h_inqekaP43E/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Customer Name": "={{ $('Support Call Intake').item.json['Customer Name'] }}",
+            "Customer Email": "={{ $('Support Call Intake').item.json['Customer Email'] }}",
+            "Customer Issue": "={{ JSON.parse($('Analyze Support Call').item.json.output).customer_issue }}",
+            "Submitted At": "={{ $('Support Call Intake').item.json.submittedAt }}",
+            "Priority": "={{ JSON.parse($('Analyze Support Call').item.json.output).priority }}",
+            "Suggested Response": "={{ JSON.parse($('Analyze Support Call').item.json.output).suggested_response }}",
+            "Summary": "={{ JSON.parse($('Analyze Support Call').item.json.output).summary }}",
+            "Follow-up Action": "={{ JSON.parse($('Analyze Support Call').item.json.output).follow_up_action }}",
+            "Call Transcript": "={{ $('Support Call Intake').item.json['Call Transcript'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Customer Name",
+              "displayName": "Customer Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Customer Email",
+              "displayName": "Customer Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Customer Issue",
+              "displayName": "Customer Issue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Suggested Response",
+              "displayName": "Suggested Response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Follow-up Action",
+              "displayName": "Follow-up Action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Call Transcript",
+              "displayName": "Call Transcript",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Submitted At",
+              "displayName": "Submitted At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -48,
+        -288
+      ],
+      "id": "66be6a20-ff6c-45b0-82e4-25a3cd7f7c43",
+      "name": "Save Call Analysis",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "I4C9vVlROKcxE3cw",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "simantoroja@gmail.com",
+        "subject": "=AI Support Call Analysis Report",
+        "message": "=<!DOCTYPE html>\n<html>\n<body style=\"margin:0;padding:0;background:#f4f7fb;font-family:Arial,Helvetica,sans-serif;color:#1f2937;\">\n\n<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding:30px 15px;background:#f4f7fb;\">\n<tr>\n<td align=\"center\">\n\n<table width=\"600\" cellpadding=\"0\" cellspacing=\"0\"\nstyle=\"max-width:600px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;\">\n\n<tr>\n<td style=\"background:#111827;padding:25px 30px;color:#ffffff;\">\n<h1 style=\"margin:0;font-size:24px;\">Support Call Analysis</h1>\n<p style=\"margin:8px 0 0;color:#d1d5db;font-size:14px;\">\nAI-generated support report\n</p>\n</td>\n</tr>\n\n<tr>\n<td style=\"padding:30px;\">\n\n<h2 style=\"margin:0 0 20px;font-size:18px;\">Customer Information</h2>\n\n<table width=\"100%\" cellpadding=\"8\" cellspacing=\"0\" style=\"font-size:14px;\">\n<tr>\n<td><strong>Name</strong></td>\n<td>{{ $('Support Call Intake').item.json[\"Customer Name\"] }}</td>\n</tr>\n<tr>\n<td><strong>Email</strong></td>\n<td>{{ $('Support Call Intake').item.json[\"Customer Email\"] }}</td>\n</tr>\n</table>\n\n<hr style=\"border:0;border-top:1px solid #e5e7eb;margin:25px 0;\">\n\n<h3 style=\"font-size:16px;\">Priority</h3>\n\n<div style=\"background:#f3f4f6;border-left:4px solid #2563eb;padding:14px;\">\n<p style=\"margin:0;font-size:15px;font-weight:bold;\">\n{{ JSON.parse($('Analyze Support Call').item.json.output).priority }}\n</p>\n</div>\n\n<h3 style=\"font-size:16px;\">Call Summary</h3>\n<p style=\"font-size:14px;line-height:24px;color:#4b5563;\">\n{{ JSON.parse($('Analyze Support Call').item.json.output).summary }}\n</p>\n\n<h3 style=\"font-size:16px;\">Customer Issue</h3>\n<p style=\"font-size:14px;line-height:24px;color:#4b5563;\">\n{{ JSON.parse($('Analyze Support Call').item.json.output).customer_issue }}\n</p>\n\n<h3 style=\"font-size:16px;\">Suggested Response</h3>\n<div style=\"background:#f3f4f6;border-left:4px solid #2563eb;padding:15px;\">\n<p style=\"margin:0;font-size:14px;line-height:24px;color:#374151;\">\n{{ JSON.parse($('Analyze Support Call').item.json.output).suggested_response }}\n</p>\n</div>\n\n<h3 style=\"font-size:16px;\">Recommended Follow-Up</h3>\n<p style=\"font-size:14px;line-height:24px;color:#4b5563;\">\n{{ JSON.parse($('Analyze Support Call').item.json.output).follow_up_action }}\n</p>\n\n<h3 style=\"font-size:16px;\">Call Transcript</h3>\n<div style=\"background:#f9fafb;padding:15px;border-radius:6px;\">\n<p style=\"margin:0;font-size:13px;line-height:22px;color:#6b7280;white-space:pre-line;\">\n{{ $('Support Call Intake').item.json[\"Call Transcript\"] }}\n</p>\n</div>\n\n</td>\n</tr>\n\n<tr>\n<td style=\"background:#f9fafb;padding:18px 30px;text-align:center;\">\n<p style=\"margin:0;font-size:12px;color:#9ca3af;\">\nAI Support Call Analysis & Assistant\n</p>\n</td>\n</tr>\n\n</table>\n</td>\n</tr>\n</table>\n\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        -288
+      ],
+      "id": "0c88e933-01f6-441e-a910-429debf7b35d",
+      "name": "Send Support Report",
+      "webhookId": "118720fe-434b-4661-878b-eaf1b9fc9017",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "OOIthN3bXlej1kZK",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "CALL ANALYSIS RECORD\n\nStores the AI-generated support\ncall analysis for future reference.\n\nIncludes:\n• Customer details\n• Call summary\n• Customer issue\n• Priority\n• Suggested response\n• Follow-up action\n• Original transcript",
+        "height": 464,
+        "width": 288,
+        "color": "#C3AFE9"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        -544
+      ],
+      "id": "6e442f77-2fda-4351-9793-f9ead1d08976",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "AI SUPPORT CALL ANALYSIS\n\nAnalyzes customer support call transcripts\nand automatically generates:\n\n• Call summary\n• Customer issue\n• Priority classification\n• Suggested response\n• Recommended follow-up\n\nThe analysis is stored in Google Sheets\nand delivered to the support team by email.",
+        "height": 832,
+        "width": 1280,
+        "color": "#C9E9FD"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -752,
+        -704
+      ],
+      "id": "0136f0b8-888b-4ccb-9f73-fb1f87907c9e",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "AUTOMATED SUPPORT REPORT\n\nAI analysis is delivered to the\nsupport team automatically after\neach call transcript is processed.",
+        "height": 384,
+        "color": "#C3AFE9"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        240,
+        -512
+      ],
+      "id": "92d55b37-d372-4b4d-a687-e92e1f7efb14",
+      "name": "Sticky Note2"
+    }
+  ],
+  "connections": {
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Analyze Support Call",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Support Call Intake": {
+      "main": [
+        [
+          {
+            "node": "Analyze Support Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Support Call": {
+      "main": [
+        [
+          {
+            "node": "Save Call Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Call Analysis": {
+      "main": [
+        [
+          {
+            "node": "Send Support Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "7d03d804-6ad1-483d-9aa6-0cc8e5c02de7",
+  "activeVersionId": null,
+  "versionCounter": 130,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-28T17:23:09.009Z",
+      "createdAt": "2026-09-28T17:23:09.009Z",
+      "role": "workflow:owner",
+      "workflowId": "L17DPt3FNlvb6DlV",
+      "projectId": "xy99whhfbsQcWwSm",
+      "project": {
+        "updatedAt": "2026-09-26T09:26:54.676Z",
+        "createdAt": "2026-09-26T09:26:17.283Z",
+        "id": "xy99whhfbsQcWwSm",
+        "name": "SAKHAWAT SIMANTO <simantoroja@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "6c8cb8ff-fdac-418a-a6ae-e270c3e73751"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

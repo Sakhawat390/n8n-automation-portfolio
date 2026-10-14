@@ -1,0 +1,10 @@
+﻿.env
+.env.*
+!.env.example
+node_modules/
+.n8n/
+*.sqlite
+*.db
+private-backups/
+n8n-private-backup/
+credentials*.json

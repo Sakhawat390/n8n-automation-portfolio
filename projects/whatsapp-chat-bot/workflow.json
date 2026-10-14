@@ -1,0 +1,491 @@
+{
+  "updatedAt": "2026-10-07T21:45:50.955Z",
+  "createdAt": "2026-10-03T14:58:42.365Z",
+  "id": "CfILuspgfdEm7OK9",
+  "name": "Whatsapp Chat Bot",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "da2ba0b3-779f-41d3-b028-f4f45af974ac",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -448,
+        0
+      ],
+      "id": "ae7e5472-4382-4740-99bd-87fbc6ed525d",
+      "name": "Webhook",
+      "webhookId": "da2ba0b3-779f-41d3-b028-f4f45af974ac"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c4c2970a-336b-4aaa-af80-2de23a4e0d66",
+              "leftValue": "={{ $json.body.data.content.text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -48,
+        0
+      ],
+      "id": "8ef72505-495c-4a35-80b4-1405b6b57733",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.data.content.text }}",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "You are a helpful, polite, and professional WhatsApp e-commerce customer support assistant. Your goal is to assist customers with product inquiries, pricing, stock availability, store policies, delivery details, and order tracking.\n\nYou have access to Google Sheet tools with three tabs (`Products`, `FAQ`, and `Orders`). Always use your tools to look up accurate, up-to-date information before answering a customer. Never guess or hallucinate product prices, stock levels, or store policies.\n\n### Guidelines & Rules:\n1. **Product Inquiries:**\n   - Look up the item in the `Products` sheet to check its exact price (in BDT) and whether `IsAvailable` is \"Yes\" or \"No\".\n   - If an item is out of stock (`No`), politely inform the customer and suggest alternatives if available.\n\n2. **FAQs & Store Policies:**\n   - Look up the `FAQ` sheet to answer questions regarding delivery charges, delivery times, payment methods, warranty, or return policies.\n   - Core policies to remember:\n     - **Payment:** We accept orders through advance payment via bKash or Nagad.\n     - **Returns:** If a customer receives a damaged or incorrect product, they must contact us within **24 hours** of delivery with details/photos.\n     - **Delivery Cost & Time:** BDT 60 inside Dhaka (1-2 days) and BDT 120 outside Dhaka (2-5 days).\n\n3. **Order Status:**\n   - If a customer asks about their order status, use the `Orders` sheet to find their details using their name or phone number.\n\n4. **Tone & Style:**\n   - Keep messages clean, friendly, and optimized for WhatsApp readability (use brief paragraphs and clear spacing).\n   - Maintain a helpful and welcoming customer service persona at all times."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        368,
+        0
+      ],
+      "id": "d0c20a94-1d14-4a8e-859b-e1d832a22974",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-safeguard-20b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        272
+      ],
+      "id": "c6a406fb-39a5-48b5-a526-531d0800cae3",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "bKiWqa0hJsOO8yLj",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        272
+      ],
+      "id": "48348e39-4ced-4ba2-9bdc-e138e3ecd541",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "J6ik0cmPWdx3Cyxq",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.body.data.recipientPhoneNumberId }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        560,
+        256
+      ],
+      "id": "ec4d4682-4248-425f-8f83-cac1c518686c",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1jwKsoGKgdRczYajmGKNd937J2n0iMiebgfBkdBp6mWo",
+          "mode": "list",
+          "cachedResultName": "Ecomm Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jwKsoGKgdRczYajmGKNd937J2n0iMiebgfBkdBp6mWo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 169487255,
+          "mode": "list",
+          "cachedResultName": "FAQ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jwKsoGKgdRczYajmGKNd937J2n0iMiebgfBkdBp6mWo/edit#gid=169487255"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        880,
+        256
+      ],
+      "id": "6d75abbf-7ee6-4ad7-a03c-903c6ae19912",
+      "name": "Get row(s) in sheet in Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "I4C9vVlROKcxE3cw",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1jwKsoGKgdRczYajmGKNd937J2n0iMiebgfBkdBp6mWo",
+          "mode": "list",
+          "cachedResultName": "Ecomm Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jwKsoGKgdRczYajmGKNd937J2n0iMiebgfBkdBp6mWo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1918691736,
+          "mode": "list",
+          "cachedResultName": "Orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jwKsoGKgdRczYajmGKNd937J2n0iMiebgfBkdBp6mWo/edit#gid=1918691736"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Customer Nmae": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Customer_Nmae', ``, 'string') }}",
+            "Product": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Product', ``, 'string') }}",
+            "Bill": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Bill', ``, 'string') }}",
+            "Bkash number": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Bkash_number', ``, 'string') }}",
+            "Transaction ID": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Transaction_ID', ``, 'string') }}",
+            "Date": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Date', ``, 'string') }}",
+            "Status": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Status', ``, 'string') }}",
+            "Address": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Address', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Customer Nmae",
+              "displayName": "Customer Nmae",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Product",
+              "displayName": "Product",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Bill",
+              "displayName": "Bill",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Bkash number",
+              "displayName": "Bkash number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Transaction ID",
+              "displayName": "Transaction ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Address",
+              "displayName": "Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1040,
+        256
+      ],
+      "id": "8142fd09-5308-48ab-af11-e2d4e31ddb8b",
+      "name": "Append row in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "I4C9vVlROKcxE3cw",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://crm.riwhap.com/api/v2/whatsapp-business/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n  {\n    to: $('Webhook').first().json.body.data.senderPhoneNumber,\n    phoneNoId: $('Webhook').first().json.body.data.recipientPhoneNumberId,\n    type: 'text',\n    text: $json.output\n  }\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        736,
+        0
+      ],
+      "id": "5bfdb5a5-0d6e-4a42-a7b1-7d4fd5a94e43",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "G9OFpMZENoGSMNmY",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1jwKsoGKgdRczYajmGKNd937J2n0iMiebgfBkdBp6mWo",
+          "mode": "list",
+          "cachedResultName": "Ecomm Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jwKsoGKgdRczYajmGKNd937J2n0iMiebgfBkdBp6mWo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Products",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jwKsoGKgdRczYajmGKNd937J2n0iMiebgfBkdBp6mWo/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        720,
+        256
+      ],
+      "id": "47791ee2-1a7d-4007-8a0b-70ce82282778",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "I4C9vVlROKcxE3cw",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "a790c177-6c58-4bc6-8de8-64cb06623a3f",
+  "activeVersionId": null,
+  "versionCounter": 144,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-10-03T14:58:42.366Z",
+      "createdAt": "2026-10-03T14:58:42.366Z",
+      "role": "workflow:owner",
+      "workflowId": "CfILuspgfdEm7OK9",
+      "projectId": "xy99whhfbsQcWwSm",
+      "project": {
+        "updatedAt": "2026-09-26T09:26:54.676Z",
+        "createdAt": "2026-09-26T09:26:17.283Z",
+        "id": "xy99whhfbsQcWwSm",
+        "name": "SAKHAWAT SIMANTO <simantoroja@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "6c8cb8ff-fdac-418a-a6ae-e270c3e73751"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

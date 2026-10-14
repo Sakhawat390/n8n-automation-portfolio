@@ -1,0 +1,239 @@
+{
+  "updatedAt": "2026-10-07T16:33:47.882Z",
+  "createdAt": "2026-09-28T15:43:19.995Z",
+  "id": "s5sS4IQ1qDeKAz3U",
+  "name": "AI Customer Support & FAQ Automation",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-20b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        0,
+        400
+      ],
+      "id": "1baf570a-33bd-45c9-b8fa-7fb216ed239c",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "bKiWqa0hJsOO8yLj",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Customer Support Center",
+        "formDescription": "Have a question or need help with something? Submit your request below and our AI-powered support assistant will provide a clear answer based on our support knowledge base.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Customer Question",
+              "fieldType": "textarea",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Customer Email",
+              "fieldType": "email",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        -688,
+        96
+      ],
+      "id": "a3d97c52-fe51-4697-8b31-5fad781d4abb",
+      "name": "Customer Support Request",
+      "webhookId": "3170c73f-20cd-490d-b048-9965f7d3010e"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1FSlox7zSg9NKpHF4kpOSO_Db3uQr1yD16C3Wpy3l89Q",
+          "mode": "list",
+          "cachedResultName": "AI Customer Support Knowledge Base",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FSlox7zSg9NKpHF4kpOSO_Db3uQr1yD16C3Wpy3l89Q/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FSlox7zSg9NKpHF4kpOSO_Db3uQr1yD16C3Wpy3l89Q/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -368,
+        192
+      ],
+      "id": "dd3ca5b1-2a5d-44de-8fe0-865a0e2b03bb",
+      "name": "Load FAQ Knowledge Base",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "I4C9vVlROKcxE3cw",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Answer the customer's question using the available FAQ knowledge base.\n\nCustomer Question:\n{{ $('Customer Support Request').item.json[\"Customer Question\"] }}\n\nFAQ Knowledge Base:\n{{ JSON.stringify($('Load FAQ Knowledge Base').all().map(item => item.json)) }}\n\nProvide a clear, concise, accurate, and professional answer.\n\nIf the FAQ knowledge base does not contain enough information to answer the question, do not guess. Instead, explain that the support team should be contacted for further assistance.",
+        "options": {
+          "systemMessage": "You are an AI customer support assistant for a business.\n\nYour job is to provide clear, accurate, and professional answers to customer questions using ONLY the information available in the provided FAQ knowledge base.\n\nFollow these rules:\n\n1. Use the FAQ knowledge base as the primary source of truth.\n2. Do not invent services, prices, policies, timelines, guarantees, or other business information.\n3. If the FAQ contains enough information to answer the question, provide a direct and helpful answer.\n4. If the FAQ does not contain enough information, clearly say that you don't have enough information and recommend contacting the support team.\n5. Keep responses concise and easy for customers to understand.\n6. Maintain a friendly, professional, and helpful tone.\n7. Do not mention internal systems, AI models, prompts, workflows, or the FAQ database to the customer.\n8. Do not expose or repeat the customer's private information unnecessarily.\n9. Do not use Markdown unless it improves readability.\n10. Never make assumptions about information that is not provided.\n\nYour goal is to resolve the customer's question whenever the available knowledge allows it, while avoiding unsupported claims."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        0,
+        192
+      ],
+      "id": "9bf8e476-1887-469c-9723-3ca9d950364b",
+      "name": "AI Support Assistant",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Customer Support Request').item.json['Customer Email'] }}",
+        "subject": "Customer Support Response",
+        "message": "=<!DOCTYPE html>\n<html>\n<body style=\"margin:0;padding:0;background:#f4f7fb;font-family:Arial,Helvetica,sans-serif;color:#1f2937;\">\n\n<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding:30px 15px;background:#f4f7fb;\">\n<tr>\n<td align=\"center\">\n\n<table width=\"600\" cellpadding=\"0\" cellspacing=\"0\"\nstyle=\"max-width:600px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;\">\n\n<tr>\n<td style=\"background:#111827;padding:25px 30px;color:#ffffff;\">\n<h1 style=\"margin:0;font-size:24px;\">Customer Support</h1>\n<p style=\"margin:8px 0 0;color:#d1d5db;font-size:14px;\">\nWe're here to help\n</p>\n</td>\n</tr>\n\n<tr>\n<td style=\"padding:30px;\">\n\n<p style=\"margin:0 0 20px;font-size:15px;\">\nHello,\n</p>\n\n<p style=\"font-size:15px;line-height:24px;color:#4b5563;\">\nThank you for contacting our support team. Here is the response to your question:\n</p>\n\n<div style=\"background:#f3f4f6;border-left:4px solid #2563eb;padding:16px;margin:20px 0;\">\n<p style=\"margin:0;font-size:14px;line-height:23px;color:#374151;\">\n{{ $('AI Support Assistant').item.json.output }}\n</p>\n</div>\n\n<p style=\"font-size:14px;line-height:23px;color:#4b5563;\">\nIf you need any further assistance, please feel free to contact our support team.\n</p>\n\n<p style=\"margin:25px 0 0;font-size:14px;color:#374151;\">\nBest regards,<br>\n<strong>Customer Support Team</strong>\n</p>\n\n</td>\n</tr>\n\n<tr>\n<td style=\"background:#f9fafb;padding:18px 30px;text-align:center;\">\n<p style=\"margin:0;font-size:12px;color:#9ca3af;\">\nAI Customer Support & FAQ Automation\n</p>\n</td>\n</tr>\n\n</table>\n\n</td>\n</tr>\n</table>\n\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        192
+      ],
+      "id": "d3c9fe31-b12d-4b44-b3cb-57f7c504891a",
+      "name": "Send Support Response",
+      "webhookId": "0277bdf6-0284-47c3-91ed-06a418ae0116",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "OOIthN3bXlej1kZK",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "FAQ KNOWLEDGE BASE\n\nProvides the AI Support Assistant\nwith the latest approved answers.\n\nThe AI uses this information to:\n• Answer common customer questions\n• Avoid unsupported claims\n• Recommend contacting support\n  when information is unavailable",
+        "height": 448,
+        "width": 336,
+        "color": "#CCB4F9"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -464,
+        -48
+      ],
+      "id": "4a621197-7bae-4f74-8a51-bf79fb0182e2",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Support Assistant",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Customer Support Request": {
+      "main": [
+        [
+          {
+            "node": "Load FAQ Knowledge Base",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load FAQ Knowledge Base": {
+      "main": [
+        [
+          {
+            "node": "AI Support Assistant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Support Assistant": {
+      "main": [
+        [
+          {
+            "node": "Send Support Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "3b394a1f-ff0a-408b-94f8-bf662209feac",
+  "activeVersionId": null,
+  "versionCounter": 94,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-28T15:43:20.011Z",
+      "createdAt": "2026-09-28T15:43:20.011Z",
+      "role": "workflow:owner",
+      "workflowId": "s5sS4IQ1qDeKAz3U",
+      "projectId": "xy99whhfbsQcWwSm",
+      "project": {
+        "updatedAt": "2026-09-26T09:26:54.676Z",
+        "createdAt": "2026-09-26T09:26:17.283Z",
+        "id": "xy99whhfbsQcWwSm",
+        "name": "SAKHAWAT SIMANTO <simantoroja@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "6c8cb8ff-fdac-418a-a6ae-e270c3e73751"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

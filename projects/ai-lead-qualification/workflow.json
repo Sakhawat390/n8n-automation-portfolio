@@ -1,0 +1,737 @@
+{
+  "updatedAt": "2026-10-05T14:17:14.530Z",
+  "createdAt": "2026-09-27T15:59:23.195Z",
+  "id": "o25A0H8H27hCLkJ0",
+  "name": "AI Lead Qualification",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        192,
+        528
+      ],
+      "id": "572d1138-972d-482c-98bb-4d1da7209104",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "J6ik0cmPWdx3Cyxq",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Request a Business Consultation",
+        "formDescription": "Tell us about your business needs, goals, budget, and timeline. Our AI-powered lead qualification system will analyze your request and help prioritize it for the appropriate follow-up.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "First Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Last Name"
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Phone",
+              "placeholder": "01*********",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Company",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "What do you need help with?",
+              "fieldType": "textarea",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "What is your approximate budget?",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "When would you like to start?",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        -464,
+        304
+      ],
+      "id": "51d23d9a-9dde-412f-94ec-4c9857c27d00",
+      "name": "Lead Intake Form",
+      "webhookId": "f9eae4c1-a510-44fc-8406-5f310bfcbd9f"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "154BmvOdi7IAfNQCNxWPf8BP7qH8u8dunMhRduoRz7xk",
+          "mode": "list",
+          "cachedResultName": "AI Lead Qualification System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/154BmvOdi7IAfNQCNxWPf8BP7qH8u8dunMhRduoRz7xk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/154BmvOdi7IAfNQCNxWPf8BP7qH8u8dunMhRduoRz7xk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "First Name": "={{ $json['First Name'] }}",
+            "Last Name": "={{ $json['Last Name'] }}",
+            "Email": "={{ $json.Email }}",
+            "Phone": "={{ $json.Phone }}",
+            "Company": "={{ $json.Company }}",
+            "Requirement": "={{ $json['What do you need help with?'] }}",
+            "Budget": "={{ $json['What is your approximate budget?'] }}",
+            "Timeline": "={{ $json['When would you like to start?'] }}",
+            "Submitted At": "={{ $json.submittedAt }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Requirement",
+              "displayName": "Requirement",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Budget",
+              "displayName": "Budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Timeline",
+              "displayName": "Timeline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AI Analysis",
+              "displayName": "AI Analysis",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Suggested Response",
+              "displayName": "Suggested Response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Submitted At",
+              "displayName": "Submitted At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -144,
+        304
+      ],
+      "id": "a5cf30ad-b99a-4546-8553-987dbba2d033",
+      "name": "Store New Lead",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "I4C9vVlROKcxE3cw",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze and qualify this business lead.\n\nLead information:\n\nFirst Name: {{ $json[\"First Name\"] }}\nLast Name: {{ $json[\"Last Name\"] }}\nEmail: {{ $json[\"Email\"] }}\nPhone: {{ $json[\"Phone\"] }}\nCompany: {{ $json[\"Company\"] }}\nRequirement: {{ $json[\"Requirement\"] }}\nBudget: {{ $json[\"Budget\"] }}\nTimeline: {{ $json[\"Timeline\"] }}\n\nDetermine the lead's priority and provide the required JSON response.",
+        "options": {
+          "systemMessage": "You are an AI lead qualification assistant for a business.\n\nYour job is to analyze incoming leads objectively and help the sales team prioritize follow-up.\n\nClassify every lead as exactly one of:\n- Hot\n- Warm\n- Cold\n\nUse only the information provided by the lead. Consider factors such as:\n- Urgency\n- Business need\n- Budget\n- Timeline\n- Potential business value\n\nDo not invent facts, budget amounts, timelines, company information, or customer requirements.\n\nReturn ONLY valid JSON with exactly these three fields:\n\n{\n  \"priority\": \"Hot, Warm, or Cold\",\n  \"analysis\": \"A concise explanation of why the lead received this priority.\",\n  \"suggested_response\": \"A professional response the sales team can send to the lead.\"\n}\n\nPriority guidelines:\n\nHot:\nThe lead shows strong buying intent, an urgent need, a suitable budget, or a near-term timeline.\n\nWarm:\nThe lead has a legitimate business need but shows moderate urgency, an unclear budget, or a longer timeline.\n\nCold:\nThe lead shows low urgency, limited information, weak buying intent, or no clear near-term requirement.\n\nDo not use Markdown.\nDo not include ```json.\nDo not add any text before or after the JSON."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        192,
+        304
+      ],
+      "id": "e377d4f2-cc21-4d48-91a4-031d5d20c725",
+      "name": "AI Lead Analyzer"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "154BmvOdi7IAfNQCNxWPf8BP7qH8u8dunMhRduoRz7xk",
+          "mode": "list",
+          "cachedResultName": "AI Lead Qualification System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/154BmvOdi7IAfNQCNxWPf8BP7qH8u8dunMhRduoRz7xk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/154BmvOdi7IAfNQCNxWPf8BP7qH8u8dunMhRduoRz7xk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('Store New Lead').item.json.Email }}",
+            "Priority": "={{ JSON.parse($('AI Lead Analyzer').item.json.output).priority }}",
+            "Suggested Response": "={{ JSON.parse($('AI Lead Analyzer').item.json.output).suggested_response }}",
+            "AI Analysis": "={{ JSON.parse($('AI Lead Analyzer').item.json.output).analysis }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Requirement",
+              "displayName": "Requirement",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Budget",
+              "displayName": "Budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Timeline",
+              "displayName": "Timeline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AI Analysis",
+              "displayName": "AI Analysis",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Suggested Response",
+              "displayName": "Suggested Response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Submitted At",
+              "displayName": "Submitted At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        560,
+        352
+      ],
+      "id": "55dc1121-98fb-48cf-9485-ece9381fbb16",
+      "name": "Save AI Qualification",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "I4C9vVlROKcxE3cw",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ JSON.parse($('AI Lead Analyzer').item.json.output).priority }}",
+                    "rightValue": "Hot",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "c6f74fed-441a-4b7f-adce-895ea9bf9c57"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Hot"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "315d0cae-7e70-4368-b66b-a70088670d65",
+                    "leftValue": "={{ JSON.parse($('AI Lead Analyzer').item.json.output).priority }}",
+                    "rightValue": "Warm",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Warm"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "c910b4e6-0746-44dc-a669-da50e566f505",
+                    "leftValue": "={{ JSON.parse($('AI Lead Analyzer').item.json.output).priority }}",
+                    "rightValue": "Cold",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Cold"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        416
+      ],
+      "id": "99741554-a0eb-4948-ad17-c2f0366d4ae9",
+      "name": "Lead Priority Router"
+    },
+    {
+      "parameters": {
+        "sendTo": "=simantoroja@gmail.com",
+        "subject": "=🔥 Hot Lead Alert — {{ $('AI Lead Analyzer').item.json.output ? JSON.parse($('AI Lead Analyzer').item.json.output).priority : \"Hot\" }}",
+        "message": "=<!DOCTYPE html>\n<html>\n<body style=\"margin:0;padding:0;background:#f4f7fb;font-family:Arial,Helvetica,sans-serif;color:#1f2937;\">\n\n<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding:30px 15px;background:#f4f7fb;\">\n<tr>\n<td align=\"center\">\n\n<table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:600px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;\">\n\n<tr>\n<td style=\"background:#111827;padding:25px 30px;color:#ffffff;\">\n<h1 style=\"margin:0;font-size:24px;\">🔥 New Hot Lead</h1>\n<p style=\"margin:8px 0 0;color:#d1d5db;font-size:14px;\">\nImmediate follow-up recommended\n</p>\n</td>\n</tr>\n\n<tr>\n<td style=\"padding:30px;\">\n\n<h2 style=\"margin:0 0 20px;font-size:18px;\">Lead Information</h2>\n\n<table width=\"100%\" cellpadding=\"8\" cellspacing=\"0\" style=\"font-size:14px;\">\n<tr>\n<td><strong>Name</strong></td>\n<td>{{ $('Store New Lead').item.json[\"First Name\"] }} {{ $('Store New Lead').item.json[\"Last Name\"] }}</td>\n</tr>\n<tr>\n<td><strong>Email</strong></td>\n<td>{{ $('Store New Lead').item.json[\"Email\"] }}</td>\n</tr>\n<tr>\n<td><strong>Phone</strong></td>\n<td>{{ $('Store New Lead').item.json[\"Phone\"] }}</td>\n</tr>\n<tr>\n<td><strong>Company</strong></td>\n<td>{{ $('Store New Lead').item.json[\"Company\"] }}</td>\n</tr>\n<tr>\n<td><strong>Budget</strong></td>\n<td>{{ $('Store New Lead').item.json[\"Budget\"] }}</td>\n</tr>\n<tr>\n<td><strong>Timeline</strong></td>\n<td>{{ $('Store New Lead').item.json[\"Timeline\"] }}</td>\n</tr>\n</table>\n\n<hr style=\"border:0;border-top:1px solid #e5e7eb;margin:25px 0;\">\n\n<h3 style=\"font-size:16px;\">Requirement</h3>\n<p style=\"font-size:14px;line-height:24px;color:#4b5563;\">\n{{ $('Store New Lead').item.json[\"Requirement\"] }}\n</p>\n\n<h3 style=\"font-size:16px;\">AI Analysis</h3>\n<p style=\"font-size:14px;line-height:24px;color:#4b5563;\">\n{{ JSON.parse($('AI Lead Analyzer').item.json.output).analysis }}\n</p>\n\n<h3 style=\"font-size:16px;\">Suggested Response</h3>\n<div style=\"background:#f3f4f6;border-left:4px solid #2563eb;padding:15px;\">\n<p style=\"margin:0;font-size:14px;line-height:24px;color:#374151;\">\n{{ JSON.parse($('AI Lead Analyzer').item.json.output).suggested_response }}\n</p>\n</div>\n\n</td>\n</tr>\n\n<tr>\n<td style=\"background:#f9fafb;padding:18px 30px;text-align:center;\">\n<p style=\"margin:0;font-size:12px;color:#9ca3af;\">\nAI Lead Qualification System\n</p>\n</td>\n</tr>\n\n</table>\n</td>\n</tr>\n</table>\n\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1312,
+        480
+      ],
+      "id": "95d9bf70-cce7-4ffe-80e5-72d3c8ab42f0",
+      "name": "Hot Lead Alert",
+      "webhookId": "2ad1cc2d-b0de-4e2a-b73e-a1a9047c9a10",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "OOIthN3bXlej1kZK",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "=simantoroja@gmail.com",
+        "subject": "=🟡 New Warm Lead — Follow-Up Recommended",
+        "message": "=<!DOCTYPE html>\n<html>\n<body style=\"margin:0;padding:0;background:#f4f7fb;font-family:Arial,Helvetica,sans-serif;color:#1f2937;\">\n\n<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding:30px 15px;background:#f4f7fb;\">\n<tr>\n<td align=\"center\">\n\n<table width=\"600\" cellpadding=\"0\" cellspacing=\"0\"\nstyle=\"max-width:600px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;\">\n\n<tr>\n<td style=\"background:#111827;padding:25px 30px;color:#ffffff;\">\n<h1 style=\"margin:0;font-size:24px;\">🟡 New Warm Lead</h1>\n<p style=\"margin:8px 0 0;color:#d1d5db;font-size:14px;\">\nFollow-up recommended\n</p>\n</td>\n</tr>\n\n<tr>\n<td style=\"padding:30px;\">\n\n<h2 style=\"margin:0 0 20px;font-size:18px;\">Lead Information</h2>\n\n<table width=\"100%\" cellpadding=\"8\" cellspacing=\"0\"\nstyle=\"font-size:14px;\">\n\n<tr>\n<td><strong>Name</strong></td>\n<td>{{ $('Store New Lead').item.json[\"First Name\"] }} {{ $('Store New Lead').item.json[\"Last Name\"] }}</td>\n</tr>\n\n<tr>\n<td><strong>Email</strong></td>\n<td>{{ $('Store New Lead').item.json[\"Email\"] }}</td>\n</tr>\n\n<tr>\n<td><strong>Phone</strong></td>\n<td>{{ $('Store New Lead').item.json[\"Phone\"] }}</td>\n</tr>\n\n<tr>\n<td><strong>Company</strong></td>\n<td>{{ $('Store New Lead').item.json[\"Company\"] }}</td>\n</tr>\n\n<tr>\n<td><strong>Budget</strong></td>\n<td>{{ $('Store New Lead').item.json[\"Budget\"] }}</td>\n</tr>\n\n<tr>\n<td><strong>Timeline</strong></td>\n<td>{{ $('Store New Lead').item.json[\"Timeline\"] }}</td>\n</tr>\n\n</table>\n\n<hr style=\"border:0;border-top:1px solid #e5e7eb;margin:25px 0;\">\n\n<h3 style=\"font-size:16px;\">Requirement</h3>\n\n<p style=\"font-size:14px;line-height:24px;color:#4b5563;\">\n{{ $('Store New Lead').item.json[\"Requirement\"] }}\n</p>\n\n<h3 style=\"font-size:16px;\">AI Analysis</h3>\n\n<p style=\"font-size:14px;line-height:24px;color:#4b5563;\">\n{{ JSON.parse($('AI Lead Analyzer').item.json.output).analysis }}\n</p>\n\n<h3 style=\"font-size:16px;\">Suggested Response</h3>\n\n<div style=\"background:#f3f4f6;border-left:4px solid #f59e0b;padding:15px;\">\n\n<p style=\"margin:0;font-size:14px;line-height:24px;color:#374151;\">\n{{ JSON.parse($('AI Lead Analyzer').item.json.output).suggested_response }}\n</p>\n\n</div>\n\n</td>\n</tr>\n\n<tr>\n<td style=\"background:#f9fafb;padding:18px 30px;text-align:center;\">\n\n<p style=\"margin:0;font-size:12px;color:#9ca3af;\">\nAI Lead Qualification System\n</p>\n\n</td>\n</tr>\n\n</table>\n</td>\n</tr>\n</table>\n\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1312,
+        656
+      ],
+      "id": "3dc8ab68-f30e-4fe5-9d34-b123245103eb",
+      "name": "Warm Lead Alert",
+      "webhookId": "fc7a69db-5e55-4e6e-bf0c-3ed48bc56cc8",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "OOIthN3bXlej1kZK",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "LEAD PRIORITY ROUTING\n\nAI qualification determines the lead priority.\n\n🔥 HOT\nImmediate sales follow-up\n\n🟡 WARM\nFollow up when appropriate\n\n🔵 COLD\nStore for future nurturing",
+        "height": 496,
+        "width": 336,
+        "color": "#4F4A4A"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        800,
+        224
+      ],
+      "id": "1beb077a-dfdf-438f-8e39-95788c83d149",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "AI LEAD QUALIFICATION\n\nThe AI analyzes each lead using:\n• Business requirement\n• Budget\n• Timeline\n• Urgency\n\nIt assigns one priority:\n\n🔥 HOT — Immediate follow-up\n🟡 WARM — Follow-up recommended\n🔵 COLD — Store for future nurturing",
+        "height": 704,
+        "width": 1040,
+        "color": "#C18EDC"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        144,
+        64
+      ],
+      "id": "0b8e3958-ecb7-4e5c-8071-a5a800a5d3de",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "SALES NOTIFICATIONS\n\nHot and Warm leads trigger\nautomated internal email alerts.\n\nCold leads remain stored for\nfuture nurturing.",
+        "height": 528,
+        "color": "#C18EDC"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        304
+      ],
+      "id": "2845bef3-7255-4a23-8f20-46a725566356",
+      "name": "Sticky Note2"
+    }
+  ],
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Lead Analyzer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lead Intake Form": {
+      "main": [
+        [
+          {
+            "node": "Store New Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store New Lead": {
+      "main": [
+        [
+          {
+            "node": "AI Lead Analyzer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Lead Analyzer": {
+      "main": [
+        [
+          {
+            "node": "Save AI Qualification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save AI Qualification": {
+      "main": [
+        [
+          {
+            "node": "Lead Priority Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lead Priority Router": {
+      "main": [
+        [
+          {
+            "node": "Hot Lead Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Warm Lead Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "7c7baaa9-ab25-4e8a-bde4-e08930e8d6bb",
+  "activeVersionId": null,
+  "versionCounter": 257,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-27T15:59:23.201Z",
+      "createdAt": "2026-09-27T15:59:23.201Z",
+      "role": "workflow:owner",
+      "workflowId": "o25A0H8H27hCLkJ0",
+      "projectId": "xy99whhfbsQcWwSm",
+      "project": {
+        "updatedAt": "2026-09-26T09:26:54.676Z",
+        "createdAt": "2026-09-26T09:26:17.283Z",
+        "id": "xy99whhfbsQcWwSm",
+        "name": "SAKHAWAT SIMANTO <simantoroja@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "6c8cb8ff-fdac-418a-a6ae-e270c3e73751"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

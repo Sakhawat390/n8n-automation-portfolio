@@ -1,0 +1,447 @@
+{
+  "updatedAt": "2026-10-05T13:51:43.878Z",
+  "createdAt": "2026-09-26T09:34:26.901Z",
+  "id": "VWE0MMILdO8JtzyN",
+  "name": "AI Newsletter Subscription Manager",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Join Our Newsletter",
+        "formDescription": "Stay updated with our latest news, insights, product updates, and useful resources. Subscribe to receive our newsletter directly in your inbox.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "=First name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Last name"
+            },
+            {
+              "fieldLabel": "Mobile Number",
+              "fieldType": "number",
+              "placeholder": "01*********"
+            },
+            {
+              "fieldLabel": "Email Address",
+              "fieldType": "email",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        -976,
+        -208
+      ],
+      "id": "aa017af9-dc30-4a70-accc-1a7e0f5ecd86",
+      "name": "On form submission",
+      "webhookId": "2fc4c6aa-0ad5-45ff-8d86-ece819a444e8",
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        288,
+        144
+      ],
+      "id": "3303bc9d-d57a-4a7e-9f67-93b6afd06867",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "J6ik0cmPWdx3Cyxq",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create a personalized newsletter welcome email for this new subscriber.\n\nSubscriber information:\n\nFull Name: {{ $json['Full name'] }}\nMobile Number: {{ $('On form submission').item.json['Mobile Number'] }}\nEmail: {{ $('On form submission').item.json['Email Address'] }}\nSubmission Date: {{ $('On form submission').item.json.submittedAt }}\n\nWrite a friendly, professional welcome message that:\n- Welcomes the subscriber to the newsletter\n- Thanks them for subscribing\n- Briefly explains what they can expect from the newsletter\n- Uses their first name or full name naturally\n- Does not invent specific products, offers, discounts, or company information\n- Keeps the message concise and professional\n\nReturn only the email content. Do not include a subject line.",
+        "options": {
+          "systemMessage": "You are a professional email newsletter designer and copywriter.\n\nYour task is to create a polished, attractive HTML newsletter email for a new subscriber.\n\nFollow these requirements exactly:\n\n- Return ONLY the complete HTML email.\n- Do NOT use Markdown.\n- Do NOT include ```html or any code fences.\n- The HTML must be compatible with Gmail.\n- Use inline CSS only.\n- Do not use JavaScript.\n- Do not use external CSS, fonts, or images.\n- Use tables where appropriate for reliable email rendering.\n- Use a maximum content width of 600px.\n- Make the email readable on both desktop and mobile devices.\n- Keep the design modern, clean, professional, and technology-focused.\n- Include a clear headline.\n- Include a short personalized welcome message.\n- Thank the subscriber for joining the newsletter.\n- Briefly explain what they can expect from the newsletter.\n- Include a natural call-to-action.\n- Include a simple professional footer.\n- Use the subscriber's name naturally.\n- Do not invent personal information, products, services, offers, discounts, statistics, or company claims that were not provided.\n- Do not include the subscriber's private information unnecessarily in the visible email.\n- Do not include a subject line.\n\nBrand:\nSakhawat NES Newsletter\n\nBrand style:\nModern, clean, professional, technology-focused.\n\nThe final output must be a complete HTML document starting with <!DOCTYPE html> and ending with </html>."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        288,
+        -16
+      ],
+      "id": "19adaf39-63cd-4700-b627-1c552a908e4a",
+      "name": "AI Agent",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "12wBnBhRFDlM0J4tBSq3P7fJHN794KVtIp3VCCN6v_kw",
+          "mode": "list",
+          "cachedResultName": "news letter leads sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12wBnBhRFDlM0J4tBSq3P7fJHN794KVtIp3VCCN6v_kw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12wBnBhRFDlM0J4tBSq3P7fJHN794KVtIp3VCCN6v_kw/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Email",
+              "lookupValue": "={{ $json['Email Address'] }}"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -528,
+        -128
+      ],
+      "id": "836e21be-c1f9-4049-a631-a4f4524f3d3e",
+      "name": "Check Existing Subscriber",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "I4C9vVlROKcxE3cw",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6ed5d1e1-ce0d-486b-b5bd-c7e477f549e7",
+              "leftValue": "={{ $json[\"row_number\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -320,
+        -112
+      ],
+      "id": "3f01b9a9-65cb-448f-abca-2df85ea8ff9f",
+      "name": "Subscriber Already Exists?"
+    },
+    {
+      "parameters": {
+        "content": "SUBSCRIBER DUPLICATE CHECK\n\nChecks whether the submitted email\nalready exists in the subscriber list.\n\nTRUE → Existing subscriber\nFALSE → New subscriber",
+        "height": 320,
+        "width": 608,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        -256
+      ],
+      "id": "8799f2cf-7ea5-4d7e-9526-25562831f4af",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Newsletter Form\n\nWorkflow starts here\n",
+        "height": 240,
+        "width": 288,
+        "color": "#694776"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1056,
+        -288
+      ],
+      "id": "2ca64d28-f808-4af4-9189-9fbcf00da7af",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "12wBnBhRFDlM0J4tBSq3P7fJHN794KVtIp3VCCN6v_kw",
+          "mode": "list",
+          "cachedResultName": "news letter leads sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12wBnBhRFDlM0J4tBSq3P7fJHN794KVtIp3VCCN6v_kw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12wBnBhRFDlM0J4tBSq3P7fJHN794KVtIp3VCCN6v_kw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Full name": "={{ $('On form submission').item.json['First name'] }}{{ $('On form submission').item.json['Last name'] }}",
+            "Email": "={{ $('On form submission').item.json['Email Address'] }}",
+            "Mobile number": "={{ $('On form submission').item.json['Mobile Number'] }}",
+            "submission date": "={{ $('On form submission').item.json.submittedAt }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Full name",
+              "displayName": "Full name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mobile number",
+              "displayName": "Mobile number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "submission date",
+              "displayName": "submission date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -112,
+        -80
+      ],
+      "id": "6cb40a79-25ee-4fdf-a4fa-e94f89823e30",
+      "name": "Add New Subscriber",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "I4C9vVlROKcxE3cw",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Processing your Data\n\nAi agent processes your data and sends an Email to you",
+        "height": 432,
+        "width": 320,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        240,
+        -144
+      ],
+      "id": "bbed76d5-b7df-43ee-8c96-50f64b2c3c58",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "Sends Email to Customer",
+        "height": 240,
+        "width": 224,
+        "color": "#4B398E"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        720,
+        96
+      ],
+      "id": "361028ea-fec9-486d-a465-18dbada9f57b",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('On form submission').item.json['Email Address'] }}",
+        "subject": "Welcome to Sakhawat NES Newsletter",
+        "message": "=<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Welcome to Sakhawat NES Newsletter</title>\n</head>\n\n<body style=\"margin:0; padding:0; background-color:#f4f7fb; font-family:Arial,Helvetica,sans-serif; color:#1f2937;\">\n\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#f4f7fb; padding:30px 15px;\">\n    <tr>\n      <td align=\"center\">\n\n        <table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"max-width:600px; width:100%; background-color:#ffffff; border-radius:14px; overflow:hidden;\">\n\n          <!-- Header -->\n          <tr>\n            <td style=\"background-color:#111827; padding:32px 30px; text-align:center;\">\n              <div style=\"font-size:13px; letter-spacing:2px; color:#9ca3af; text-transform:uppercase;\">\n                Sakhawat NES\n              </div>\n\n              <h1 style=\"margin:10px 0 0; color:#ffffff; font-size:28px; line-height:36px;\">\n                Welcome to the Newsletter\n              </h1>\n            </td>\n          </tr>\n\n          <!-- Main Content -->\n          <tr>\n            <td style=\"padding:35px 32px;\">\n\n              <p style=\"margin:0 0 18px; font-size:17px; line-height:28px;\">\n                Hello <strong>{{ $json[\"Full name\"] }}</strong>,\n              </p>\n\n              <p style=\"margin:0 0 18px; font-size:15px; line-height:26px; color:#4b5563;\">\n                Thank you for subscribing to the Sakhawat NES Newsletter.\n                We're glad to have you with us.\n              </p>\n\n              <p style=\"margin:0 0 25px; font-size:15px; line-height:26px; color:#4b5563;\">\n                You'll receive useful updates, insights, technology-related\n                content, and other valuable information directly in your inbox.\n              </p>\n\n              <!-- Highlight Box -->\n              <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin:25px 0;\">\n                <tr>\n                  <td style=\"background-color:#f3f4f6; border-left:4px solid #2563eb; padding:18px 20px;\">\n                    <p style=\"margin:0; font-size:14px; line-height:23px; color:#374151;\">\n                      <strong>You're officially subscribed.</strong><br>\n                      Keep an eye on your inbox for our upcoming newsletter.\n                    </p>\n                  </td>\n                </tr>\n              </table>\n\n              <!-- CTA -->\n              <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin:28px auto 10px;\">\n                <tr>\n                  <td align=\"center\" style=\"background-color:#2563eb; border-radius:8px;\">\n                    <span style=\"display:inline-block; padding:14px 26px; color:#ffffff; font-size:14px; font-weight:bold;\">\n                      Stay Connected\n                    </span>\n                  </td>\n                </tr>\n              </table>\n\n              <p style=\"margin:28px 0 0; font-size:14px; line-height:24px; color:#6b7280; text-align:center;\">\n                Thanks for joining us.\n              </p>\n\n            </td>\n          </tr>\n\n          <!-- Footer -->\n          <tr>\n            <td style=\"background-color:#f9fafb; padding:22px 30px; text-align:center; border-top:1px solid #e5e7eb;\">\n              <p style=\"margin:0 0 7px; font-size:13px; font-weight:bold; color:#374151;\">\n                Sakhawat NES Newsletter\n              </p>\n\n              <p style=\"margin:0; font-size:12px; line-height:20px; color:#9ca3af;\">\n                You're receiving this email because you subscribed to our newsletter.\n              </p>\n            </td>\n          </tr>\n\n        </table>\n\n      </td>\n    </tr>\n  </table>\n\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        768,
+        160
+      ],
+      "id": "9c14489a-518b-42c8-add2-0daf0648146a",
+      "name": "Send a message",
+      "webhookId": "ea460e02-770a-4457-bc51-95fe72bd8c20",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "OOIthN3bXlej1kZK",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Check Existing Subscriber",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Existing Subscriber": {
+      "main": [
+        [
+          {
+            "node": "Subscriber Already Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subscriber Already Exists?": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Add New Subscriber",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add New Subscriber": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "f22c242d-e538-4f8a-b44e-0cd56d547745",
+  "activeVersionId": null,
+  "versionCounter": 514,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-26T09:34:26.904Z",
+      "createdAt": "2026-09-26T09:34:26.904Z",
+      "role": "workflow:owner",
+      "workflowId": "VWE0MMILdO8JtzyN",
+      "projectId": "xy99whhfbsQcWwSm",
+      "project": {
+        "updatedAt": "2026-09-26T09:26:54.676Z",
+        "createdAt": "2026-09-26T09:26:17.283Z",
+        "id": "xy99whhfbsQcWwSm",
+        "name": "SAKHAWAT SIMANTO <simantoroja@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "6c8cb8ff-fdac-418a-a6ae-e270c3e73751"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

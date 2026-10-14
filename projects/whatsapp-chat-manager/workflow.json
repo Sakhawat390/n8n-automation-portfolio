@@ -1,0 +1,166 @@
+{
+  "updatedAt": "2026-10-04T12:07:45.000Z",
+  "createdAt": "2026-09-30T18:22:57.653Z",
+  "id": "CUXhZGpFKXfparU3",
+  "name": "Whatsapp Chat manager",
+  "description": null,
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1dcc7c2b-e87a-4953-a610-21677acc3643",
+      "name": "WhatsApp Trigger",
+      "webhookId": "7aaaea64-0da3-4451-af07-527c093305b0",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "bSNlNiszpHdmmVks",
+          "name": "WhatsApp OAuth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        176,
+        64
+      ],
+      "id": "68e37d91-3c5d-4022-8239-9485fde51b21",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        176,
+        224
+      ],
+      "id": "d08c7dc2-e101-4df4-b6c2-cbfc1c99fc4e",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "bKiWqa0hJsOO8yLj",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1379256908601691",
+        "recipientPhoneNumber": "+880 1911924693",
+        "textBody": "text",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        144
+      ],
+      "id": "1c564032-479d-48c6-835b-89198a5c4ce2",
+      "name": "Send message",
+      "webhookId": "660addd7-28a7-4bf7-a89d-8ccf2e6b01b5",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "ngrk2w4WUFIO3pgf",
+          "name": "WhatsApp account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "63f86336-f4fa-4ce6-afd1-678b8f7f11ff",
+  "activeVersionId": null,
+  "versionCounter": 52,
+  "triggerCount": 1,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-30T18:22:57.656Z",
+      "createdAt": "2026-09-30T18:22:57.656Z",
+      "role": "workflow:owner",
+      "workflowId": "CUXhZGpFKXfparU3",
+      "projectId": "xy99whhfbsQcWwSm",
+      "project": {
+        "updatedAt": "2026-09-26T09:26:54.676Z",
+        "createdAt": "2026-09-26T09:26:17.283Z",
+        "id": "xy99whhfbsQcWwSm",
+        "name": "SAKHAWAT SIMANTO <simantoroja@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "6c8cb8ff-fdac-418a-a6ae-e270c3e73751"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

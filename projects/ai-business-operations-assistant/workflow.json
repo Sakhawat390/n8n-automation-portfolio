@@ -1,0 +1,374 @@
+{
+  "updatedAt": "2026-10-07T21:37:57.820Z",
+  "createdAt": "2026-10-02T14:47:12.800Z",
+  "id": "SNgH5ELSPNiz9qNs",
+  "name": "AI Business Operations Assistant",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-safeguard-20b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        224
+      ],
+      "id": "00da907c-8564-4c16-8382-02189eb492f0",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "bKiWqa0hJsOO8yLj",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "AI Business Assistant",
+        "formDescription": "Submit a business request for AI-powered analysis. The assistant will summarize the request, identify important information, determine its priority, and provide practical recommendations and next steps.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Employee Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Employee Email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Business Request ",
+              "fieldType": "textarea",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        -544,
+        -16
+      ],
+      "id": "04c6631f-e7c3-42f8-a251-1c8b28f390d9",
+      "name": "AI Business Operations Assistant",
+      "webhookId": "010d67aa-a807-4b1a-80bc-63592efeff22"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze this internal business request.\n\nEmployee Name:\n{{ $json['Employee Name'] }}\n\nEmployee Email:\n{{ $json['Employee Email'] }}\n\nBusiness Request:\n{{ $json['Business Request '] }}\n\nDetermine:\n\n- A concise summary\n- The most important information\n- Priority: High, Medium, or Low\n- The recommended action\n- Clear next steps\n\nBase the analysis only on the information provided.\nDo not invent facts or business information.\n\nReturn the required JSON response.",
+        "options": {
+          "systemMessage": "You are an AI business operations assistant for a company.\n\nYour job is to analyze internal business requests objectively and provide practical, accurate guidance based only on the information provided.\n\nReturn ONLY valid JSON with exactly these five fields:\n\n{\n  \"summary\": \"A concise summary of the business request.\",\n  \"important_information\": \"The key information the employee should know.\",\n  \"priority\": \"High, Medium, or Low\",\n  \"recommended_action\": \"The most appropriate action to take.\",\n  \"next_steps\": \"Clear and practical next steps.\"\n}\n\nPriority guidelines:\n\nHigh:\nThe request is urgent, business-critical, time-sensitive, or could significantly affect operations.\n\nMedium:\nThe request is important and requires action, but does not appear immediately urgent.\n\nLow:\nThe request is routine, informational, or can reasonably be handled later.\n\nRules:\n\n- Use only the information provided in the business request.\n- Do not invent facts, numbers, deadlines, customers, policies, or business information.\n- Keep the analysis concise and professional.\n- Make recommendations practical and relevant to the request.\n- Do not expose internal reasoning.\n- Do not use Markdown.\n- Do not include ```json.\n- Do not add any text before or after the JSON."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -192,
+        -16
+      ],
+      "id": "4fe21070-7de9-48f5-b692-ed60e66d921b",
+      "name": "AI Business Analyst",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1BWlxFU4J8xv8X7-ZhAr48B7MXbG0S3wKqt5looH4mN8",
+          "mode": "list",
+          "cachedResultName": "AI Business Assistant Records",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BWlxFU4J8xv8X7-ZhAr48B7MXbG0S3wKqt5looH4mN8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Business Requests",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1BWlxFU4J8xv8X7-ZhAr48B7MXbG0S3wKqt5looH4mN8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Employee Name": "={{ $('AI Business Operations Assistant').item.json['Employee Name'] }}",
+            "Employee Email": "={{ $('AI Business Operations Assistant').item.json['Employee Email'] }}",
+            "Business Request": "={{ $('AI Business Operations Assistant').item.json['Business Request '] }}",
+            "Summary": "={{ JSON.parse($('AI Business Analyst').item.json.output).summary }}",
+            "Important Information": "={{ JSON.parse($('AI Business Analyst').item.json.output).important_information }}",
+            "Priority": "={{ JSON.parse($('AI Business Analyst').item.json.output).priority }}",
+            "Recommended Action": "={{ JSON.parse($('AI Business Analyst').item.json.output).recommended_action }}",
+            "Next Steps": "={{ JSON.parse($('AI Business Analyst').item.json.output).next_steps }}",
+            "Submitted At": "={{ $('AI Business Operations Assistant').item.json.submittedAt }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Employee Name",
+              "displayName": "Employee Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Employee Email",
+              "displayName": "Employee Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Business Request",
+              "displayName": "Business Request",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Important Information",
+              "displayName": "Important Information",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Recommended Action",
+              "displayName": "Recommended Action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Next Steps",
+              "displayName": "Next Steps",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Submitted At",
+              "displayName": "Submitted At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        -16
+      ],
+      "id": "f5799309-6e23-4bd2-acd8-038b8082c935",
+      "name": "Save Business Analysis",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "I4C9vVlROKcxE3cw",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json['Employee Email'] }}",
+        "subject": "AI Business Operations Analysis Report",
+        "message": "=<!DOCTYPE html>\n<html>\n<body style=\"margin:0;padding:0;background:#f4f7fb;font-family:Arial,Helvetica,sans-serif;color:#1f2937;\">\n\n<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding:30px 15px;background:#f4f7fb;\">\n<tr>\n<td align=\"center\">\n\n<table width=\"600\" cellpadding=\"0\" cellspacing=\"0\"\nstyle=\"max-width:600px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;\">\n\n<tr>\n<td style=\"background:#111827;padding:25px 30px;color:#ffffff;\">\n<h1 style=\"margin:0;font-size:24px;\">Business Operations Analysis</h1>\n<p style=\"margin:8px 0 0;color:#d1d5db;font-size:14px;\">\nAI-generated business request report\n</p>\n</td>\n</tr>\n\n<tr>\n<td style=\"padding:30px;\">\n\n<h2 style=\"margin:0 0 20px;font-size:18px;\">Request Information</h2>\n\n<table width=\"100%\" cellpadding=\"8\" cellspacing=\"0\" style=\"font-size:14px;\">\n<tr>\n<td><strong>Employee</strong></td>\n<td>{{ $json['Employee Name'] }}</td>\n</tr>\n\n<tr>\n<td><strong>Email</strong></td>\n<td>{{ $json['Employee Email'] }}</td>\n</tr>\n</table>\n\n<hr style=\"border:0;border-top:1px solid #e5e7eb;margin:25px 0;\">\n\n<h3 style=\"font-size:16px;\">Priority</h3>\n\n<div style=\"background:#f3f4f6;border-left:4px solid #2563eb;padding:14px;\">\n<p style=\"margin:0;font-size:15px;font-weight:bold;\">\n{{ JSON.parse($('AI Business Analyst').item.json.output).priority }}\n</p>\n</div>\n\n<h3 style=\"font-size:16px;\">Business Request</h3>\n\n<div style=\"background:#f9fafb;padding:15px;border-radius:6px;\">\n<p style=\"margin:0;font-size:14px;line-height:23px;color:#4b5563;\">\n{{ $json['Business Request'] }}\n</p>\n</div>\n\n<h3 style=\"font-size:16px;\">Summary</h3>\n<p style=\"font-size:14px;line-height:24px;color:#4b5563;\">\n{{ JSON.parse($('AI Business Analyst').item.json.output).summary }}\n</p>\n\n<h3 style=\"font-size:16px;\">Important Information</h3>\n<p style=\"font-size:14px;line-height:24px;color:#4b5563;\">\n{{ JSON.parse($('AI Business Analyst').item.json.output).important_information }}\n</p>\n\n<h3 style=\"font-size:16px;\">Recommended Action</h3>\n\n<div style=\"background:#f3f4f6;border-left:4px solid #2563eb;padding:15px;\">\n<p style=\"margin:0;font-size:14px;line-height:24px;color:#374151;\">\n{{ JSON.parse($('AI Business Analyst').item.json.output).recommended_action }}\n</p>\n</div>\n\n<h3 style=\"font-size:16px;\">Next Steps</h3>\n<p style=\"font-size:14px;line-height:24px;color:#4b5563;\">\n{{ JSON.parse($('AI Business Analyst').item.json.output).next_steps }}\n</p>\n\n</td>\n</tr>\n\n<tr>\n<td style=\"background:#f9fafb;padding:18px 30px;text-align:center;\">\n<p style=\"margin:0;font-size:12px;color:#9ca3af;\">\nAI Business Operations Assistant\n</p>\n</td>\n</tr>\n\n</table>\n\n</td>\n</tr>\n</table>\n\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        544,
+        -16
+      ],
+      "id": "7427c304-2e9b-4fff-83f7-1c05d044e30b",
+      "name": "Send Analysis Report",
+      "webhookId": "00feb759-0851-451c-bd4b-6e2a38eeff5e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "OOIthN3bXlej1kZK",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "BUSINESS ANALYSIS RECORD\n\nStores AI-generated analysis for\neach internal business request.\n\nIncludes:\n• Employee details\n• Original request\n• Summary\n• Important information\n• Priority\n• Recommended action\n• Next steps\n• Submission time",
+        "height": 496,
+        "color": "#C3AEE9"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        144,
+        -304
+      ],
+      "id": "3f3f0fa2-1a98-4d2c-9c3d-c731950564bc",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "AI BUSINESS OPERATIONS ASSISTANT\n\nAnalyzes internal business requests and\nautomatically generates:\n\n• Request summary\n• Important information\n• Priority classification\n• Recommended action\n• Practical next steps\n\nThe analysis is stored in Google Sheets\nand delivered to the employee by email.",
+        "height": 784,
+        "width": 1216,
+        "color": "#A8D1F0"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        -416
+      ],
+      "id": "0a543b69-7fa2-4030-adff-f90558803fb5",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "AUTOMATED ANALYSIS REPORT\n\nEach business request produces a\nstructured AI analysis and a professional\nemail report for the employee.",
+        "height": 304,
+        "color": "#C3AEE9"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        480,
+        -176
+      ],
+      "id": "0efe6a0c-909e-4507-8723-356ba615ba4c",
+      "name": "Sticky Note2"
+    }
+  ],
+  "connections": {
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Business Analyst",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Business Operations Assistant": {
+      "main": [
+        [
+          {
+            "node": "AI Business Analyst",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Business Analyst": {
+      "main": [
+        [
+          {
+            "node": "Save Business Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Business Analysis": {
+      "main": [
+        [
+          {
+            "node": "Send Analysis Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "d690a25b-3547-4df9-87a8-ae5f5a3b2d79",
+  "activeVersionId": null,
+  "versionCounter": 166,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-10-02T14:47:12.800Z",
+      "createdAt": "2026-10-02T14:47:12.800Z",
+      "role": "workflow:owner",
+      "workflowId": "SNgH5ELSPNiz9qNs",
+      "projectId": "xy99whhfbsQcWwSm",
+      "project": {
+        "updatedAt": "2026-09-26T09:26:54.676Z",
+        "createdAt": "2026-09-26T09:26:17.283Z",
+        "id": "xy99whhfbsQcWwSm",
+        "name": "SAKHAWAT SIMANTO <simantoroja@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "6c8cb8ff-fdac-418a-a6ae-e270c3e73751"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}
